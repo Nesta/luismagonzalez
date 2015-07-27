@@ -1,0 +1,8 @@
+# Settings files
+sites/default/settings.php
+sites/default/services.yml
+
+# Files directory
+sites/default/files*
+# PhpStorm files
+.idea*
