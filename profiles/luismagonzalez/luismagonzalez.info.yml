@@ -1,0 +1,15 @@
+name: LuismaGonzalez
+type: profile
+description: 'Installation profile for a personal site.'
+core: 8.x
+# Optional: Declare your installation profile as a distribution
+# This will make the installer auto-select this installation profile.
+# The distribution_name property is used in the installer and other places as
+# a label for the software being installed.
+distribution:
+  name: LuismaGonzalez
+
+
+# Required modules
+dependencies:
+  - page_manager
