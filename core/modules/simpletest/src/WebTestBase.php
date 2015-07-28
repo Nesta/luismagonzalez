@@ -742,6 +742,13 @@ abstract class WebTestBase extends TestBase {
       'value' => FALSE,
       'required' => TRUE,
     ];
+
+    // Send cacheability headers so tests can check their values.
+    $settings['settings']['send_cacheability_headers'] = (object) [
+      'value' => TRUE,
+      'required' => TRUE,
+    ];
+
     $this->writeSettings($settings);
     // Allow for test-specific overrides.
     $settings_testing_file = DRUPAL_ROOT . '/' . $this->originalSite . '/settings.testing.php';
@@ -1555,7 +1562,15 @@ abstract class WebTestBase extends TestBase {
     if (!isset($options['query'][MainContentViewSubscriber::WRAPPER_FORMAT])) {
       $options['query'][MainContentViewSubscriber::WRAPPER_FORMAT] = 'drupal_ajax';
     }
-    return Json::decode($this->drupalGet($path, $options, $headers));
+    return Json::decode($this->drupalGetXHR($path, $options, $headers));
+  }
+
+  /**
+   * Requests a Drupal path as if it is a XMLHttpRequest.
+   */
+  protected function drupalGetXHR($path, array $options = array(), array $headers = array()) {
+    $headers[] = 'X-Requested-With: XMLHttpRequest';
+    return $this->drupalGet($path, $options, $headers);
   }
 
   /**
