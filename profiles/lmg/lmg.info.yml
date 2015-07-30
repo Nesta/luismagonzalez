@@ -43,9 +43,7 @@ dependencies:
   - rdf
   - views
   - views_ui
-  - tour
   - layout_plugin
-  - panels
   - page_manager
 themes:
   - bartik
