@@ -1,0 +1,7 @@
+name: luismagonzalez
+type: module
+description: Main module for luismagonzalez.
+package: Luismagonzalez
+core: 8.x
+dependencies:
+  - block

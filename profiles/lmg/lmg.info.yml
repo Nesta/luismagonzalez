@@ -43,8 +43,7 @@ dependencies:
   - rdf
   - views
   - views_ui
-  - layout_plugin
-  - page_manager
+  - blog
 themes:
   - bartik
   - seven
