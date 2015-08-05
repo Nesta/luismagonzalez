@@ -212,6 +212,9 @@ class Variable extends DrupalDumpBase {
       'name' => 'menu_options_test_content_type',
       'value' => 'a:4:{i:0;s:9:"main-menu";i:1;s:10:"management";i:2;s:10:"navigation";i:3;s:9:"user-menu";}',
     ))->values(array(
+      'name' => 'menu_override_parent_selector',
+      'value' => 'b:1;',
+    ))->values(array(
       'name' => 'menu_parent_test_content_type',
       'value' => 's:11:"main-menu:0";',
     ))->values(array(
@@ -353,6 +356,9 @@ class Variable extends DrupalDumpBase {
       'name' => 'theme_default',
       'value' => 's:6:"bartik";',
     ))->values(array(
+      'name' => 'tracker_batch_size',
+      'value' => 'i:999;',
+    ))->values(array(
       'name' => 'user_admin_role',
       'value' => 's:1:"3";',
     ))->values(array(
@@ -464,4 +470,4 @@ class Variable extends DrupalDumpBase {
   }
 
 }
-#029f6b476578be5d7449a86251be1c77
+#e0f7be890a222531c707941d0fedf479
