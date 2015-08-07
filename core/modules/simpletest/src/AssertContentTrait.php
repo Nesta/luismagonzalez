@@ -66,7 +66,7 @@ trait AssertContentTrait {
     $this->plainTextContent = NULL;
     $this->elements = NULL;
     $this->drupalSettings = array();
-    if (preg_match('/var drupalSettings = (.*?);$/m', $content, $matches)) {
+    if (preg_match('@<script type="application/json" data-drupal-selector="drupal-settings-json">([^<]*)</script>@', $content, $matches)) {
       $this->drupalSettings = Json::decode($matches[1]);
     }
   }
@@ -76,7 +76,10 @@ trait AssertContentTrait {
    */
   protected function getTextContent() {
     if (!isset($this->plainTextContent)) {
-      $this->plainTextContent = Xss::filter($this->getRawContent(), array());
+      $raw_content = $this->getRawContent();
+      // Strip everything between the HEAD tags.
+      $raw_content = preg_replace('@<head>(.+?)</head>@si', '', $raw_content);
+      $this->plainTextContent = Xss::filter($raw_content, array());
     }
     return $this->plainTextContent;
   }
