@@ -4,5 +4,9 @@ sites/default/services.yml
 
 # Files directory
 sites/default/files*
+
 # PhpStorm files
 .idea*
+
+#personal scripts
+restart.sh
