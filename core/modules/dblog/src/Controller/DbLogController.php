@@ -8,9 +8,7 @@
 namespace Drupal\dblog\Controller;
 
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Utility\Unicode;
-use Drupal\Component\Utility\Xss;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatter;
@@ -184,13 +182,16 @@ class DbLogController extends ControllerBase {
     foreach ($result as $dblog) {
       $message = $this->formatMessage($dblog);
       if ($message && isset($dblog->wid)) {
-        // Truncate link_text to 56 chars of message. The l() call will escape
-        // any unsafe HTML entities in the final text.
-        $log_text = Unicode::truncate(Html::decodeEntities(strip_tags($message)), 56, TRUE, TRUE);
+        $title = Unicode::truncate(Html::decodeEntities(strip_tags($message)), 256, TRUE, TRUE);
+        $log_text = Unicode::truncate($title, 56, TRUE, TRUE);
+        // The link generator will escape any unsafe HTML entities in the final
+        // text.
         $message = $this->l($log_text, new Url('dblog.event', array('event_id' => $dblog->wid), array(
           'attributes' => array(
-            // Provide a title for the link for useful hover hints.
-            'title' => Unicode::truncate(strip_tags($message), 256, TRUE, TRUE),
+            // Provide a title for the link for useful hover hints. The
+            // Attribute object will escape any unsafe HTML entities in the
+            // final text.
+            'title' => $title,
           ),
         )));
       }
@@ -280,7 +281,7 @@ class DbLogController extends ControllerBase {
         ),
         array(
           array('data' => $this->t('Hostname'), 'header' => TRUE),
-          SafeMarkup::checkPlain($dblog->hostname),
+          $dblog->hostname,
         ),
         array(
           array('data' => $this->t('Operations'), 'header' => TRUE),

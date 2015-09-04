@@ -74,7 +74,7 @@ class FieldFieldTest extends ViewKernelTestBase {
     $this->installEntitySchema('entity_test_rev');
 
     // Bypass any field access.
-    $this->adminUser = User::create();
+    $this->adminUser = User::create(['name' => $this->randomString()]);
     $this->adminUser->save();
     $this->container->get('current_user')->setAccount($this->adminUser);
 
@@ -531,7 +531,7 @@ class FieldFieldTest extends ViewKernelTestBase {
     $executable = Views::getView('test_field_field_test');
     $executable->execute();
 
-    $this->assertEqual('', $executable->getStyle()->getField(1, 'field_test'));
+    $this->assertEqual('', $executable->getStyle()->getField(6, 'field_test'));
   }
 
 }

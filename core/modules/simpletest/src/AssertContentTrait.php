@@ -775,14 +775,19 @@ trait AssertContentTrait {
    *   TRUE on pass, FALSE on fail.
    */
   protected function assertTitle($title, $message = '', $group = 'Other') {
-    $actual = (string) current($this->xpath('//title'));
-    if (!$message) {
-      $message = SafeMarkup::format('Page title @actual is equal to @expected.', array(
-        '@actual' => var_export($actual, TRUE),
-        '@expected' => var_export($title, TRUE),
-      ));
+    // Don't use xpath as it messes with HTML escaping.
+    preg_match('@<title>(.*)</title>@', $this->getRawContent(), $matches);
+    if (isset($matches[1])) {
+      $actual = $matches[1];
+      if (!$message) {
+        $message = SafeMarkup::format('Page title @actual is equal to @expected.', array(
+          '@actual' => var_export($actual, TRUE),
+          '@expected' => var_export($title, TRUE),
+        ));
+      }
+      return $this->assertEqual($actual, $title, $message, $group);
     }
-    return $this->assertEqual($actual, $title, $message, $group);
+    return $this->fail('No title element found on the page.');
   }
 
   /**
@@ -847,8 +852,8 @@ trait AssertContentTrait {
       return \Drupal::theme()->render($callback, $variables);
     });
     $this->verbose(
-      '<hr />' . 'Result:' . '<pre>' . SafeMarkup::checkPlain(var_export($output, TRUE)) . '</pre>'
-      . '<hr />' . 'Expected:' . '<pre>' . SafeMarkup::checkPlain(var_export($expected, TRUE)) . '</pre>'
+      '<hr />' . 'Result:' . '<pre>' . Html::escape(var_export($output, TRUE)) . '</pre>'
+      . '<hr />' . 'Expected:' . '<pre>' . Html::escape(var_export($expected, TRUE)) . '</pre>'
       . '<hr />' . $output
     );
     if (!$message) {

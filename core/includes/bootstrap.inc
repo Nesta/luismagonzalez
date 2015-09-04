@@ -7,6 +7,7 @@
 use Drupal\Component\Datetime\DateTimePlus;
 use Drupal\Component\Utility\Crypt;
 use Drupal\Component\Utility\Environment;
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\DrupalKernel;
@@ -343,6 +344,9 @@ function t($string, array $args = array(), array $options = array()) {
  * @see \Drupal\Component\Utility\SafeMarkup::format()
  * @see t()
  * @ingroup sanitization
+ *
+ * @deprecated in Drupal 8.0.0, will be removed before Drupal 9.0.0.
+ *   Use \Drupal\Component\Utility\SafeMarkup::format().
  */
 function format_string($string, array $args) {
   return SafeMarkup::format($string, $args);
@@ -373,6 +377,9 @@ function format_string($string, array $args) {
  *   TRUE if the text is valid UTF-8, FALSE if not.
  *
  * @see \Drupal\Component\Utility\Unicode::validateUtf8()
+ *
+ * @deprecated in Drupal 8.0.0, will be removed before Drupal 9.0.0.
+ *   Use \Drupal\Component\Utility\Unicode::validateUtf8().
  */
 function drupal_validate_utf8($text) {
   return Unicode::validateUtf8($text);
@@ -405,10 +412,7 @@ function watchdog_exception($type, Exception $exception, $message = NULL, $varia
 
   // Use a default value if $message is not set.
   if (empty($message)) {
-    // The exception message is run through
-    // \Drupal\Component\Utility\SafeMarkup::checkPlain() by
-    // \Drupal\Core\Utility\Error:decodeException().
-    $message = '%type: !message in %function (line %line of %file).';
+    $message = '%type: @message in %function (line %line of %file).';
   }
 
   if ($link) {
@@ -950,10 +954,16 @@ function drupal_static_reset($name = NULL) {
 /**
  * Formats text for emphasized display in a placeholder inside a sentence.
  *
- * @see \Drupal\Component\Utility\SafeMarkup::placeholder()
+ * @deprecated in Drupal 8.0.0, will be removed before Drupal 9.0.0. Use
+ *   \Drupal\Component\Utility\SafeMarkup::format() or Twig's "placeholder"
+ *   filter instead. Note this method should not be used to simply emphasize a
+ *   string and therefore has few valid use-cases. Note also, that this method
+ *   does not mark the string as safe.
+ *
+ * @see \Drupal\Component\Utility\SafeMarkup::format()
  */
 function drupal_placeholder($text) {
-  return SafeMarkup::placeholder($text);
+  return '<em class="placeholder">' . Html::escape($text) . '</em>';
 }
 
 /**

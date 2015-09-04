@@ -29,11 +29,10 @@ namespace Drupal\Component\Utility;
  *   and to fast render fields.
  *
  * @see \Drupal\Component\Utility\SafeStringTrait
- * @see \Drupal\Component\Utility\SafeMarkup::set()
  * @see \Drupal\Component\Utility\SafeMarkup::isSafe()
  * @see \Drupal\Core\Template\TwigExtension::escapeFilter()
  */
-interface SafeStringInterface {
+interface SafeStringInterface extends \JsonSerializable {
 
   /**
    * Returns a safe string.

@@ -494,7 +494,7 @@ class ViewEditForm extends ViewFormBase {
       $build['top']['display_title'] = array(
         '#theme' => 'views_ui_display_tab_setting',
         '#description' => $this->t('Display name'),
-        '#link' => $view->getExecutable()->displayHandlers->get($display['id'])->optionLink(SafeMarkup::checkPlain($display_title), 'display_title'),
+        '#link' => $view->getExecutable()->displayHandlers->get($display['id'])->optionLink($display_title, 'display_title'),
       );
     }
 
@@ -668,12 +668,10 @@ class ViewEditForm extends ViewFormBase {
 
     // Regenerate the main display area.
     $build = $this->getDisplayTab($view);
-    static::addMicroweights($build);
     $response->addCommand(new HtmlCommand('#views-tab-' . $display_id, $build));
 
     // Regenerate the top area so changes to display names and order will appear.
     $build = $this->renderDisplayTop($view);
-    static::addMicroweights($build);
     $response->addCommand(new ReplaceCommand('#views-display-top', $build));
   }
 
@@ -1062,7 +1060,7 @@ class ViewEditForm extends ViewFormBase {
         continue;
       }
 
-      $field_name = SafeMarkup::checkPlain($handler->adminLabel(TRUE));
+      $field_name = $handler->adminLabel(TRUE);
       if (!empty($field['relationship']) && !empty($relationships[$field['relationship']])) {
         $field_name = '(' . $relationships[$field['relationship']] . ') ' . $field_name;
       }
@@ -1146,24 +1144,6 @@ class ViewEditForm extends ViewFormBase {
     }
 
     return $build;
-  }
-
-  /**
-   * Recursively adds microweights to a render array, similar to what
-   * \Drupal::formBuilder()->doBuildForm() does for forms.
-   *
-   * @todo Submit a core patch to fix drupal_render() to do this, so that all
-   *   render arrays automatically preserve array insertion order, as forms do.
-   */
-  public static function addMicroweights(&$build) {
-    $count = 0;
-    foreach (Element::children($build) as $key) {
-      if (!isset($build[$key]['#weight'])) {
-        $build[$key]['#weight'] = $count/1000;
-      }
-      static::addMicroweights($build[$key]);
-      $count++;
-    }
   }
 
 }

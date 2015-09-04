@@ -20,6 +20,7 @@ use Drupal\Core\Template\Attribute;
 use Drupal\Core\Theme\ThemeSettings;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\SafeString;
 
 /**
  * @defgroup content_flags Content markers
@@ -115,7 +116,7 @@ function drupal_theme_rebuild() {
  */
 function drupal_find_theme_functions($cache, $prefixes) {
   $implementations = [];
-  $grouped_functions = drupal_group_functions_by_prefix();
+  $grouped_functions = \Drupal::service('theme.registry')->getPrefixGroupedUserFunctions();
 
   foreach ($cache as $hook => $info) {
     foreach ($prefixes as $prefix) {
@@ -159,25 +160,6 @@ function drupal_find_theme_functions($cache, $prefixes) {
   }
 
   return $implementations;
-}
-
-/**
- * Group all user functions by word before first underscore.
- *
- * @return array
- *   Functions grouped by the first prefix.
- */
-function drupal_group_functions_by_prefix() {
-  $functions = get_defined_functions();
-
-  $grouped_functions = [];
-  // Splitting user defined functions into groups by the first prefix.
-  foreach ($functions['user'] as $function) {
-    list($first_prefix,) = explode('_', $function, 2);
-    $grouped_functions[$first_prefix][] = $function;
-  }
-
-  return $grouped_functions;
 }
 
 /**
@@ -1157,9 +1139,6 @@ function template_preprocess_maintenance_task_list(&$variables) {
  * details.
  */
 function template_preprocess(&$variables, $hook, $info) {
-  // Tell all templates where they are located.
-  $variables['directory'] = \Drupal::theme()->getActiveTheme()->getPath();
-
   // Merge in variables that don't depend on hook and don't change during a
   // single page request.
   // Use the advanced drupal_static() pattern, since this is called very often.
@@ -1201,6 +1180,9 @@ function _template_preprocess_default_variables() {
 
   // Give modules a chance to alter the default template variables.
   \Drupal::moduleHandler()->alter('template_preprocess_default_variables', $variables);
+
+  // Tell all templates where they are located.
+  $variables['directory'] = \Drupal::theme()->getActiveTheme()->getPath();
 
   return $variables;
 }
@@ -1260,7 +1242,8 @@ function template_preprocess_html(&$variables) {
   }
   if (!empty($variables['page']['#title'])) {
     $head_title = array(
-      'title' => trim(strip_tags($variables['page']['#title'])),
+      // Marking the title as safe since it has had the tags stripped.
+      'title' => SafeString::create(trim(strip_tags($variables['page']['#title']))),
       'name' => $site_config->get('name'),
     );
   }
@@ -1340,14 +1323,6 @@ function template_preprocess_page(&$variables) {
     // variables.
     $variables['is_front'] = FALSE;
     $variables['db_is_active'] = FALSE;
-  }
-  if (!defined('MAINTENANCE_MODE')) {
-    $variables['action_links']   = menu_get_local_actions();
-    $variables['tabs']           = menu_local_tabs();
-  }
-  else {
-    $variables['action_links']   = array();
-    $variables['tabs']           = array();
   }
 
   if ($node = \Drupal::routeMatch()->getParameter('node')) {
@@ -1493,8 +1468,6 @@ function template_preprocess_region(&$variables) {
  *   - element: A render element representing the field.
  *   - attributes: A string containing the attributes for the wrapping div.
  *   - title_attributes: A string containing the attributes for the title.
- *   - content_attributes: A string containing the attributes for the content's
- *     div.
  */
 function template_preprocess_field(&$variables, $hook) {
   $element = $variables['element'];
@@ -1511,9 +1484,20 @@ function template_preprocess_field(&$variables, $hook) {
   // readers.
   $variables['label'] = $element['#title'];
 
+
+  // @todo Check for is_object() required due to pseudo field used in
+  // quickedit_test_entity_view_alter(). Remove this check after this is fixed
+  // in https://www.drupal.org/node/2550225.
+  $variables['multiple'] = is_object($element['#items']) ? $element['#items']->getFieldDefinition()->getFieldStorageDefinition()->isMultiple() : FALSE;
+
   static $default_attributes;
   if (!isset($default_attributes)) {
     $default_attributes = new Attribute;
+  }
+
+  // Merge attributes when a single-value field has a hidden label.
+  if ($element['#label_display'] == 'hidden' && !$variables['multiple'] && is_object($element['#items'][0])) {
+    $variables['attributes'] = NestedArray::mergeDeep($variables['attributes'], (array) $element['#items'][0]->_attributes);
   }
 
   // We want other preprocess functions and the theme implementation to have
