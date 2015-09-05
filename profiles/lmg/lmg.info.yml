@@ -43,7 +43,9 @@ dependencies:
     - rdf
     - views
     - views_ui
+    - google_analytics
     - luismagonzalez
 themes:
   - bartik
   - seven
+

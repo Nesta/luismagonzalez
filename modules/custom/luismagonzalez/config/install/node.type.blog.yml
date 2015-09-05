@@ -1,0 +1,9 @@
+type: blog
+name: 'Blog page'
+description: 'Content type for blog entries'
+help: 'Blog content'
+new_revision: false
+display_submitted: true
+preview_mode: 1
+status: true
+langcode: en
