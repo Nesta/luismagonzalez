@@ -43,7 +43,7 @@ dependencies:
     - rdf
     - views
     - views_ui
-    - tour
+    - luismagonzalez
 themes:
   - bartik
   - seven
