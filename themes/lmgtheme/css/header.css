@@ -17,10 +17,12 @@ header > a {
  * Main navigation menu
  */
 #block-mainnavigation > ul {
+    float: right;
     min-height: 2em;
     padding-left: 2.75em;
     padding-right: 1.3333em;
-    margin: 5%;
+    margin: 4%;
+    display: inline-block;
 }
 
 #block-mainnavigation > ul > li {
@@ -39,12 +41,12 @@ header > a {
 }
 
 #block-mainnavigation > ul > li:first-child {
-    border-top-right-radius: 2em;
-    border-bottom-right-radius: 2em;
+    border-top-right-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
     border-right: none;
 }
 
 #block-mainnavigation > ul > li:last-child {
-    border-top-left-radius: 2em;
-    border-bottom-left-radius: 2em;
+    border-top-left-radius: 0.5em;
+    border-bottom-left-radius: 0.5em;
 }
