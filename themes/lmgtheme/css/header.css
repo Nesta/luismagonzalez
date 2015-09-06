@@ -1,0 +1,50 @@
+/**
+ * Logo styles
+ */
+#logo {
+    max-width: 100%;
+    height: auto;
+}
+
+/**
+ * Menu styles in header section
+ */
+header > a {
+    float: left;
+}
+
+/**
+ * Main navigation menu
+ */
+#block-mainnavigation > ul {
+    min-height: 2em;
+    padding-left: 2.75em;
+    padding-right: 1.3333em;
+    margin: 5%;
+}
+
+#block-mainnavigation > ul > li {
+    float: right;
+    min-width: 80px;
+    background: black;
+    text-align: center;
+    padding: 0.3em;
+    color: white;
+    border-right: solid 2px;
+}
+
+#block-mainnavigation > ul > li a {
+    color: white;
+    text-decoration: none;
+}
+
+#block-mainnavigation > ul > li:first-child {
+    border-top-right-radius: 2em;
+    border-bottom-right-radius: 2em;
+    border-right: none;
+}
+
+#block-mainnavigation > ul > li:last-child {
+    border-top-left-radius: 2em;
+    border-bottom-left-radius: 2em;
+}
